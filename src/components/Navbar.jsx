@@ -7,6 +7,7 @@ const Navbar = () => {
         const navTween =gsap.timeline({
             scrollTrigger:{
                 trigger:"nav",
+                //when navbar reaches top of viewport
                 start: 'bottom top'
             }
         })
