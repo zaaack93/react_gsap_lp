@@ -9,13 +9,16 @@ const Hero = () => {
     const isMobile = useMediaQuery({ maxWidth: 767 });
 
     useGSAP(()=>{
+        // Split text into individual characters and words for animated entrance
         const heroSplit = new SplitText("#hero .title", {type:"chars, words"});
         const paragraphSplit = new SplitText(".subtitle", {type:"lines"});
 
+        // Apply gradient class to each character individually
         heroSplit.chars.forEach(char => {
             char.classList.add('text-gradient');
         });
 
+        // Animate title characters from bottom (yPercent:100) with stagger effect
         gsap.from(heroSplit.chars, {
             yPercent:100,
             duration:1.8,
@@ -23,6 +26,7 @@ const Hero = () => {
             stagger:0.06
         });
 
+        // Animate subtitle lines with fade in and slide up effect
         gsap.from(paragraphSplit.lines, {
             opacity:0,
             yPercent:100,
@@ -32,6 +36,8 @@ const Hero = () => {
             delay:1
         });
 
+        // Parallax effect for leaves: moves opposite directions on scroll
+        // scrub:true links animation progress directly to scroll position
         gsap.timeline({
             scrollTrigger:{
                 trigger:"#hero",
@@ -43,27 +49,36 @@ const Hero = () => {
         .to('.right-leaf', {y:200}, 0)
         .to('.left-leaf', {y: -200}, 0);
 
-        //when top of the video hits 50% of the viewport height, the animation starts
-        //when bottom of the video hits top of the viewport, the animation ends
+        // VIDEO SCROLL ANIMATION SETUP
+        // When top of the video hits 50% of the viewport height, the animation starts
+        // When bottom of the video hits top of the viewport, the animation ends
         const startValue = isMobile ? 'top 50%' : 'center 60%';
         const endValue = isMobile ? '120% top' : 'bottom top'; 
 
+        // Create timeline for scroll-controlled video playback
+        // scrub:true = scroll position directly controls video frames (no auto-play)
+        // pin:true = keeps video fixed while scrolling through it
         let tl = gsap.timeline({
             scrollTrigger: {
                 trigger: 'video',
                 start: startValue,
                 end: endValue,
-                scrub: true,
-                pin: true,
-                markers: true
+                scrub: true,  // Links scroll to animation progress
+                pin: true,     // Pins element while animating
+                markers: true  // Shows start/end markers for debugging
             }
         })
 
+        // Wait for video metadata to load to get actual duration
         videoRef.current.onloadedmetadata = () => {
             const videoDuration = videoRef.current.duration;
 
             console.log('Video Duration:', videoDuration);
 
+            // KEY: Animate video's currentTime from 0 to full duration
+            // As you scroll, GSAP seeks through video frames (not play/pause)
+            // Scroll down = currentTime increases (forward frames)
+            // Scroll up = currentTime decreases (backward frames)
             tl.to(videoRef.current, {
                 currentTime: videoDuration
             });
@@ -103,6 +118,8 @@ const Hero = () => {
                 </div>
             </div>
         </section>
+        {/* absolute inset-0 = position:absolute with top/right/bottom/left all set to 0 */}
+        {/* Makes video container stretch to fill entire parent element */}
         <div className='video absolute inset-0'>
             <video
                 ref={videoRef}
