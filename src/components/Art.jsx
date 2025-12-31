@@ -16,7 +16,8 @@ const Art = () => {
                 start:start,
                 end:'bottom center',
                 scrub: 1.5,
-                pin: true
+                pin: true,
+                markers:true
             }
         });
 

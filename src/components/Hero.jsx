@@ -65,7 +65,7 @@ const Hero = () => {
                 end: endValue,
                 scrub: true,  // Links scroll to animation progress
                 pin: true,     // Pins element while animating
-                markers: true  // Shows start/end markers for debugging
+                markers: false  // Shows start/end markers for debugging
             }
         })
 
